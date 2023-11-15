@@ -16,5 +16,5 @@
 
     - name: Deploy static website
       copy:
-         src: src
+         src: index.jsp
          dest: /var/www/html
