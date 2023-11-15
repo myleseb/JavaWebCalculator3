@@ -16,5 +16,5 @@
 
     - name: Deploy static website
       copy:
-         src: index.html
+         src: https://github.com/myleseb/JavaWebCalculator3.git
          dest: /var/www/html
