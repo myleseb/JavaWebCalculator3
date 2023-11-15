@@ -1,5 +1,5 @@
 ---
-- hosts: webservers
+- hosts: centosnode1
   become: True
   tasks:
     - name: Install Packages
