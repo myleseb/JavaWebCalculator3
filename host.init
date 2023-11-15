@@ -1,2 +1,2 @@
 [g1]
-centosnode1 ansible_host=13.49.46.215 ansible_user=centos ansible_ssh_private_key_file=~/home/centos/mylesec2.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+centosnode1 ansible_host=13.49.46.215 ansible_user=centos ansible_ssh_private_key_file=/home/centos/mylesec2.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
