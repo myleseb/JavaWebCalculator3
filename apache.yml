@@ -1,5 +1,5 @@
 ---
-- hosts: centosnode1
+- hosts: 13.49.46.215
   become: True
   tasks:
     - name: Install Packages
