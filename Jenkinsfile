@@ -9,8 +9,7 @@ pipeline{
         
         stage('Run Ansible Script'){
             steps{
-                ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'Ansible', inventory: 'host.init', playbook: 'apache.yml', vaultTmpPath: ''
-            }
+ansiblePlaybook credentialsId: 'pkey', disableHostKeyChecking: true, installation: 'Ansible', inventory: 'host.init', playbook: 'apache.yml', vaultTmpPath: ''       }
         }
     }
 }
