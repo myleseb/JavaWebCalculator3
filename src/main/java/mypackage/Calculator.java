@@ -10,6 +10,15 @@ public class Calculator extends HttpServlet
 		
 		return first+second;
 	}
+	public long divFunc(long first, long second) {
+    if (second == 0) {
+        System.err.println("Error: Division by zero");
+        return 0; // You can choose to handle this differently based on your requirements
+    }
+
+    return first / second;
+}
+
 	
 	public long subFucn(long first, long second){
 		
