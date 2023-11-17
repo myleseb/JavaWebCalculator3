@@ -1,0 +1,109 @@
+---
+- hosts: web-servers
+  become: yes
+  tasks:
+    - name: Install Java on Amazon Linux
+      become: true
+      when: "'amazon' in ansible_os_family"
+      dnf:
+        name: java-1.8.0-openjdk-devel
+        state: present
+
+
+    - name: Install Java on CentOS
+      yum:
+        name: java-1.8.0-openjdk-devel
+        state: present
+      when: ansible_distribution == 'CentOS'
+      tags: install-java
+
+    - name: Install Java on Debian
+      become: true
+      when: "'debian' in ansible_os_family"
+      apt:
+        name: openjdk-8-jdk
+        state: present
+
+    - name: Install Git on CentOS
+      dnf:
+        name: git
+        state: present
+      when: "'centos' in ansible_distribution.lower()"
+
+    - name: Install Git on Debian
+      apt:
+        name: git
+        state: present
+      when: "'debian' in ansible_distribution.lower()"
+
+    - name: Install Git on Amazon Linux
+      dnf:
+        name: git
+        state: present
+      when: "'amazon' in ansible_distribution.lower()"
+
+    - name: Install prerequisites for Tomcat on CentOS
+      when: "'centos' in inventory_hostname"
+      yum:
+        name:
+          - java-1.8.0-openjdk
+          - java-1.8.0-openjdk-devel
+        state: present
+
+    - name: Install prerequisites for Tomcat on Amazon Linux
+      become: yes
+      dnf:
+        name: java-1.8.0-amazon-corretto
+        state: present
+      when: "'amazonlinux' in inventory_hostname"
+
+    - name: Install prerequisites for Tomcat on Debian
+      when: "'debian' in inventory_hostname"
+      apt:
+        name:
+          - default-jdk
+        state: present
+
+    - name: Download and extract Apache Tomcat on all platforms
+      get_url:
+        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz"
+        dest: "/opt/"
+        mode: 0755
+
+    - name: Extract Tomcat archive
+      command: "tar -xf /opt/apache-tomcat-9.0.54.tar.gz -C /opt/"
+
+    - name: Set up symbolic link for Tomcat directory
+      file:
+        src: "/opt/apache-tomcat-9.0.54"
+        dest: "/opt/tomcat"
+        state: link
+
+    - name: Clone Git repository
+      git:
+        repo: https://github.com/myleseb/JavaWebCalculator3.git
+        dest: "/home/centos/JavaWebCalculator3/target/WebAppCal-0.0.6.war"
+        version: master
+      tags: deploy-web-app
+
+    - name: Create Tomcat webapps directory
+      become: yes
+      file:
+        path: /usr/share/tomcat/webapps/WebAppCal-0.0.6.war
+        state: directory
+      when: "'debian' in inventory_hostname"
+
+    - name: Copy WAR file to Tomcat webapps directory
+      copy:
+        src: "/home/centos/JavaWebCalculator3/target/WebAppCal-0.0.6.war"
+        dest: "/usr/share/tomcat/webapps/WebAppCal-0.0.6.war"
+      notify:
+        - Restart Tomcat
+      tags: deploy-web-app
+
+
+  handlers:
+    - name: Restart Tomcat
+      service:
+        name: tomcat
+        state: restarted
